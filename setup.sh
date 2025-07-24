@@ -3,6 +3,7 @@
 HULY_VERSION="v0.6.501"
 DOCKER_NAME="huly"
 CONFIG_FILE="huly.conf"
+ENV_FILE=".env"
 
 # Parse command line arguments
 RESET_VOLUMES=false
@@ -157,6 +158,24 @@ else
   echo "Run this script with --secret to generate a new secret."
 fi
 
+# Write configuration to .env file
+cat > "$ENV_FILE" << EOF
+HOST_ADDRESS=$_HOST_ADDRESS
+SECURE=$_SECURE
+HTTP_PORT=$_HTTP_PORT
+HTTP_BIND=$HTTP_BIND
+TITLE=${TITLE:-Huly}
+DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
+LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
+VOLUME_DB_PATH=$_VOLUME_DB_PATH
+VOLUME_ELASTIC_PATH=$_VOLUME_ELASTIC_PATH
+VOLUME_FILES_PATH=$_VOLUME_FILES_PATH
+HULY_SECRET=$(cat .huly.secret)
+EOF
+
+echo "Configuration written to $ENV_FILE"
+
+# Export variables for envsubst to work with template generation
 export HOST_ADDRESS=$_HOST_ADDRESS
 export SECURE=$_SECURE
 export HTTP_PORT=$_HTTP_PORT
